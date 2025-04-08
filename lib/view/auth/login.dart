@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scandish/viemodel/auth_viewmodel.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -8,6 +9,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final AuthViewmodel _viewmodel = AuthViewmodel();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -21,6 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 Image(image: AssetImage("assets/logo.png")),
                 TextField(
+                  controller: _emailController,
                   style: TextStyle(fontSize: 14),
                   decoration: InputDecoration(
                     hintText: "Email",
@@ -33,6 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 16),
                 TextField(
+                  controller: _passwordController,
                   style: TextStyle(fontSize: 14),
                   decoration: InputDecoration(
                     hintText: "Password",
@@ -45,7 +52,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 24),
                 ElevatedButton(
-                  onPressed: null,
+                  onPressed: () async {
+                    String email = _emailController.text;
+                    String password = _passwordController.text;
+                    Map<String, dynamic> res = await _viewmodel.login(
+                      email,
+                      password,
+                    );
+                    print(res);
+                  },
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size.fromHeight(48),
                   ),
@@ -54,7 +69,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(height: 24),
                 TextButton(
                   onPressed:
-                      () => {Navigator.of(context).pushNamed("/auth/signup")},
+                      () => {
+                        Navigator.of(context).pushNamed("/view/auth/signup"),
+                      },
                   child: Text(
                     "Don't have an account? Sign up",
                     style: TextStyle(color: Colors.grey),
