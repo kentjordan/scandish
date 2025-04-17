@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:scandish/providers/recipe.dart';
 import 'package:scandish/view/auth/guard.dart';
 import 'package:scandish/view/auth/login.dart';
 import 'package:scandish/view/auth/signup.dart';
 import 'package:scandish/view/generate.dart';
 import 'package:scandish/view/home.dart';
+import 'package:scandish/view/recipe.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:scandish/providers/image.dart';
 
@@ -28,6 +30,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (ctx) => ScandishImageProvider()),
+        ChangeNotifierProvider(create: (ctx) => RecipeProvider()),
       ],
       child: MaterialApp(
         initialRoute: "/view/auth/guard",
@@ -37,6 +40,7 @@ class MyApp extends StatelessWidget {
           "/view/auth/signup": (ctx) => SignupScreen(),
           "/view/home": (ctx) => HomeScreen(),
           "/view/generate": (ctx) => Generate(),
+          "/view/recipe": (ctx) => RecipeScreen(),
         },
         title: 'ScanDish',
         home: Scaffold(),

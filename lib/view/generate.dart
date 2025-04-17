@@ -17,7 +17,7 @@ class Generate extends StatefulWidget {
 
 class _GenerateState extends State<Generate> {
   bool isCreatingRecipe = true;
-  String recipe = '';
+  Map<String, dynamic> recipe = {"title": "", "content": ""};
   String? imagePath;
   SupabaseClient supabase = Supabase.instance.client;
   final localHost = "192.168.0.103:8000";
@@ -45,7 +45,7 @@ class _GenerateState extends State<Generate> {
       final res = await req.send();
       res.stream.transform(utf8.decoder).listen((data) async {
         isCreatingRecipe = false;
-        recipe = data;
+        recipe = jsonDecode(jsonDecode(data)) as Map<String, dynamic>;
         String uploadPath = "uploads/${imagePath.split("/").last}";
         await supabase.storage
             .from("foods")
@@ -54,7 +54,8 @@ class _GenerateState extends State<Generate> {
             .from("foods")
             .getPublicUrl(uploadPath);
         await supabase.from("recipes").insert({
-          "content": recipe,
+          "title": recipe['title'],
+          "content": recipe['content'],
           "photo": imagePublicUrl,
         });
         setState(() {});
@@ -70,45 +71,59 @@ class _GenerateState extends State<Generate> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
           child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Generate Recipe",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 16),
-                if (imagePath != null)
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.grey[300],
-                    ),
-                    child: Image.file(
-                      File(imagePath),
-                      width: double.infinity,
-                      height: 256,
-                    ),
+            child: Expanded(
+              child: Column(
+                spacing: 8,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Generate Recipe",
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                SizedBox(height: 16),
-                if (isCreatingRecipe)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    spacing: 8,
-                    children: [
-                      SizedBox(
-                        height: 16,
-                        width: 16,
-                        child: CircularProgressIndicator(strokeWidth: 1),
+                  SizedBox(height: 16),
+                  if (imagePath != null)
+                    Container(
+                      decoration: BoxDecoration(
+                        // border: Border.all(color: Colors.gre),
+                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.grey[100],
                       ),
-                      Text("Creating your recipe..."),
-                    ],
+                      child: Image.file(
+                        File(imagePath),
+                        width: double.infinity,
+                        height: 256,
+                      ),
+                    ),
+                  SizedBox(height: 16),
+                  if (isCreatingRecipe)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      spacing: 8,
+                      children: [
+                        SizedBox(
+                          height: 16,
+                          width: 16,
+                          child: CircularProgressIndicator(strokeWidth: 1),
+                        ),
+                        Text("Creating your recipe..."),
+                      ],
+                    ),
+                  Text(
+                    recipe['title'],
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                MarkdownBody(data: recipe),
-              ],
+                  Container(
+                    padding: EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: MarkdownBody(data: recipe['content']!),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
