@@ -1,4 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:provider/provider.dart';
+import 'package:scandish/providers/image.dart';
+import 'package:http/http.dart' as http;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Generate extends StatefulWidget {
   const Generate({super.key});
@@ -8,8 +16,103 @@ class Generate extends StatefulWidget {
 }
 
 class _GenerateState extends State<Generate> {
+  bool isCreatingRecipe = true;
+  String recipe = '';
+  String? imagePath;
+  SupabaseClient supabase = Supabase.instance.client;
+  final localHost = "192.168.0.103:8000";
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      generateRecipe(context, supabase);
+    });
+  }
+
+  Future<void> generateRecipe(
+    BuildContext context,
+    SupabaseClient supabase,
+  ) async {
+    ScandishImageProvider provider = context.read<ScandishImageProvider>();
+    String? imagePath = provider.imagePath;
+    final url = Uri.http(localHost, "/generate");
+    final req = http.MultipartRequest("POST", url);
+    if (imagePath != null) {
+      final file = await http.MultipartFile.fromPath("file", imagePath);
+      req.files.add(file);
+      final res = await req.send();
+      res.stream.transform(utf8.decoder).listen((data) async {
+        isCreatingRecipe = false;
+        recipe = data;
+        String uploadPath = "uploads/${imagePath.split("/").last}";
+        await supabase.storage
+            .from("foods")
+            .upload(uploadPath, File(imagePath));
+        String imagePublicUrl = supabase.storage
+            .from("foods")
+            .getPublicUrl(uploadPath);
+        await supabase.from("recipes").insert({
+          "content": recipe,
+          "photo": imagePublicUrl,
+        });
+        setState(() {});
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: SafeArea(child: Text("Generate")));
+    ScandishImageProvider provider = context.read<ScandishImageProvider>();
+    String? imagePath = provider.imagePath;
+
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Generate Recipe",
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 16),
+                if (imagePath != null)
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.grey[300],
+                    ),
+                    child: Image.file(
+                      File(imagePath),
+                      width: double.infinity,
+                      height: 256,
+                    ),
+                  ),
+                SizedBox(height: 16),
+                if (isCreatingRecipe)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 8,
+                    children: [
+                      SizedBox(
+                        height: 16,
+                        width: 16,
+                        child: CircularProgressIndicator(strokeWidth: 1),
+                      ),
+                      Text("Creating your recipe..."),
+                    ],
+                  ),
+                MarkdownBody(data: recipe),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
