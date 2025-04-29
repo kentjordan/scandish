@@ -20,7 +20,7 @@ class _GenerateState extends State<Generate> {
   Map<String, dynamic> recipe = {"title": "", "content": ""};
   String? imagePath;
   SupabaseClient supabase = Supabase.instance.client;
-  final localHost = "192.168.0.103:8000";
+  final localHost = "192.168.1.104:8000";
 
   @override
   void initState() {
@@ -40,7 +40,7 @@ class _GenerateState extends State<Generate> {
     final url = Uri.http(localHost, "/generate");
     final req = http.MultipartRequest("POST", url);
     if (imagePath != null) {
-      final file = await http.MultipartFile.fromPath("file", imagePath);
+      final file = await http.MultipartFile.fromPath("image", imagePath);
       req.files.add(file);
       final res = await req.send();
       res.stream.transform(utf8.decoder).listen((data) async {
