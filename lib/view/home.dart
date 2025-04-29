@@ -112,7 +112,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                snapshot.data?[index]['title'],
+                                                snapshot.data?[index]['title'] ??
+                                                    "[No title]",
                                                 style: TextStyle(
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.bold,
