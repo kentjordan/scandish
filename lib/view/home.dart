@@ -244,7 +244,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         );
                   }
-                  return Center(child: CircularProgressIndicator());
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: const Color(0xFFED9A48),
+                    ),
+                  );
                 },
               ),
             ],
