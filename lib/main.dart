@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (ctx) => RecipeProvider()),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         initialRoute: "/view/auth/guard",
         routes: {
           "/view/auth/guard": (ctx) => AuthGuardScreen(),

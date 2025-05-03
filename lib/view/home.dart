@@ -22,6 +22,10 @@ class _HomeScreenState extends State<HomeScreen> {
         .select('id, created_at, title, content, photo');
   }
 
+  void logout() {
+    supabase.auth.signOut();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -33,28 +37,70 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "ScanDish",
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-              ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextButton(
-                    onPressed: () async {
-                      setState(() {
-                        recipes = supabase
-                            .from("recipes")
-                            .select('id, created_at, title, content, photo');
-                      });
+                  Text(
+                    "ScanDish",
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder:
+                            (ctx) => AlertDialog(
+                              title: Text("Are you sure?"),
+                              content: Text("You're logging out"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    logout();
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("YES"),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("NO"),
+                                ),
+                              ],
+                            ),
+                      );
                     },
-                    child: Text("Refresh"),
+                    child: Icon(Icons.logout),
                   ),
                 ],
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        setState(() {
+                          recipes = supabase
+                              .from("recipes")
+                              .select('id, created_at, title, content, photo');
+                        });
+                      },
+                      child: Row(
+                        spacing: 4,
+                        children: [
+                          Icon(Icons.refresh, size: 16),
+                          Text("Refresh"),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
               FutureBuilder(
                 future: recipes,
@@ -65,7 +111,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     return snapshot.data!.isEmpty
                         ? Expanded(
                           child: Center(
-                            child: Text("You don't have any generated recipe."),
+                            child: Text(
+                              textAlign: TextAlign.center,
+                              "Tap the button below to\ngenerate your first recipe.",
+                            ),
                           ),
                         )
                         : Expanded(
@@ -203,7 +252,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.amber[600],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        backgroundColor: const Color(0xFFED9A48),
         onPressed: () async {
           XFile? file = await ImagePicker().pickImage(
             source: ImageSource.camera,

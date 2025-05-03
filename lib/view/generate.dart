@@ -71,7 +71,7 @@ class _GenerateState extends State<Generate> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
+          padding: const EdgeInsets.all(16),
           child: SingleChildScrollView(
             child: Expanded(
               child: Column(
@@ -79,16 +79,14 @@ class _GenerateState extends State<Generate> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Generate Recipe",
+                    "ScanDish",
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 16),
                   if (imagePath != null)
                     Container(
                       decoration: BoxDecoration(
-                        // border: Border.all(color: Colors.gre),
                         borderRadius: BorderRadius.circular(8),
-                        color: Colors.grey[100],
+                        color: Colors.grey[200],
                       ),
                       child: Image.file(
                         File(imagePath),
@@ -96,19 +94,26 @@ class _GenerateState extends State<Generate> {
                         height: 256,
                       ),
                     ),
-                  SizedBox(height: 16),
+                  SizedBox(height: 8),
                   if (isCreatingRecipe)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      spacing: 8,
-                      children: [
-                        SizedBox(
-                          height: 16,
-                          width: 16,
-                          child: CircularProgressIndicator(strokeWidth: 1),
-                        ),
-                        Text("Creating your recipe..."),
-                      ],
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.amber[200],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: EdgeInsets.all(8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        spacing: 8,
+                        children: [
+                          SizedBox(
+                            height: 16,
+                            width: 16,
+                            child: CircularProgressIndicator(strokeWidth: 1),
+                          ),
+                          Text("Creating your recipe. Please wait."),
+                        ],
+                      ),
                     ),
                   Text(
                     recipe['title'],

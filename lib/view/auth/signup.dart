@@ -15,9 +15,12 @@ class _SignupScreenState extends State<SignupScreen> {
   final _lastNameController = TextEditingController();
   final _viewModel = AuthViewmodel();
 
+  bool isSigningUp = false;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: Colors.white,
         body: Padding(
@@ -30,57 +33,161 @@ class _SignupScreenState extends State<SignupScreen> {
                 height: 300,
                 width: 300,
               ),
-              Text("Signup", style: TextStyle(fontSize: 16)),
-              TextField(
-                controller: _firstNameController,
-                decoration: InputDecoration(
-                  hintText: "First name",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(16)),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 8,
+                children: [
+                  Text(
+                    textAlign: TextAlign.start,
+                    "Create your account",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
-                ),
-              ),
-              TextField(
-                controller: _lastNameController,
-                decoration: InputDecoration(
-                  hintText: "Last name",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(16)),
+                  SizedBox(height: 4),
+                  TextField(
+                    style: TextStyle(fontSize: 12),
+                    controller: _firstNameController,
+                    decoration: InputDecoration(
+                      hintText: "First name",
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        borderSide: BorderSide(color: const Color(0xFFED9A48)),
+                      ),
+                      contentPadding: EdgeInsets.all(8),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(width: 2, color: Colors.red),
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              TextField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  hintText: "Email",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(16)),
+                  TextField(
+                    style: TextStyle(fontSize: 12),
+                    controller: _lastNameController,
+                    decoration: InputDecoration(
+                      hintText: "Last name",
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        borderSide: BorderSide(color: const Color(0xFFED9A48)),
+                      ),
+                      contentPadding: EdgeInsets.all(8),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(width: 2, color: Colors.red),
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              TextField(
-                controller: _passwordController,
-                decoration: InputDecoration(
-                  hintText: "Password",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(16)),
+                  TextField(
+                    style: TextStyle(fontSize: 12),
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      hintText: "Email",
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        borderSide: BorderSide(color: const Color(0xFFED9A48)),
+                      ),
+                      contentPadding: EdgeInsets.all(8),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(width: 2, color: Colors.red),
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                      ),
+                    ),
                   ),
-                ),
+                  TextField(
+                    style: TextStyle(fontSize: 12),
+                    controller: _passwordController,
+                    decoration: InputDecoration(
+                      hintText: "Password",
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        borderSide: BorderSide(color: const Color(0xFFED9A48)),
+                      ),
+                      contentPadding: EdgeInsets.all(8),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(width: 2, color: Colors.red),
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () async {
-                  String email = _emailController.text;
-                  String password = _passwordController.text;
-                  Map<String, dynamic> res = await _viewModel.signup(
-                    email,
-                    password,
-                  );
-                },
+                onPressed:
+                    isSigningUp
+                        ? null
+                        : () async {
+                          setState(() {
+                            isSigningUp = true;
+                          });
+                          String email = _emailController.text;
+                          String password = _passwordController.text;
+                          _viewModel
+                              .signup(email, password)
+                              .then((data) {
+                                if (!data['success']) {
+                                  showDialog(
+                                    context: context,
+                                    builder:
+                                        (ctx) => AlertDialog(
+                                          title: Text("Oops!"),
+                                          content: Text(
+                                            "Something went wrong when signing up. Please try again.",
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  isSigningUp = false;
+                                                });
+
+                                                Navigator.of(ctx).pop();
+                                              },
+                                              child: Text("OK"),
+                                            ),
+                                          ],
+                                        ),
+                                  );
+                                }
+                              })
+                              .onError((error, _) {
+                                setState(() {
+                                  isSigningUp = false;
+                                  showDialog(
+                                    context: context,
+                                    builder:
+                                        (ctx) => AlertDialog(
+                                          title: Text("Error"),
+                                          content: Text(
+                                            "Something went wrong. Please try again.",
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(ctx).pop();
+                                              },
+                                              child: Text("OK"),
+                                            ),
+                                          ],
+                                        ),
+                                  );
+                                });
+                              });
+                        },
                 style: ElevatedButton.styleFrom(
-                  minimumSize: Size.fromHeight(48),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  backgroundColor: const Color(0xFFED9A48),
+                  minimumSize: Size.fromHeight(40),
                 ),
-                child: Text("Signup"),
+                child:
+                    isSigningUp
+                        ? SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(color: Colors.white),
+                        )
+                        : Text("Signup", style: TextStyle(color: Colors.white)),
               ),
               TextButton(
                 onPressed:
