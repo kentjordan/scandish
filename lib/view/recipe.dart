@@ -44,45 +44,48 @@ class _RecipeScreenState extends State<RecipeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
-            child: Column(
-              spacing: 8,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (title != null && content != null && photoUrl != null) ...[
-                  Text(
-                    title ?? "",
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 8),
-                  Container(
-                    decoration: BoxDecoration(
-                      // border: Border.all(color: Colors.gre),
-                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.grey[100],
+        child:
+            title != null && content != null && photoUrl != null
+                ? SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (title != null &&
+                            content != null &&
+                            photoUrl != null) ...[
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: Image.network(
+                              photoUrl ?? "",
+                              width: double.infinity,
+                              height: 256,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          Text(
+                            title ?? "",
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          MarkdownBody(data: content ?? ""),
+                        ],
+                      ],
                     ),
-                    child: Image.network(
-                      photoUrl ?? "",
-                      width: double.infinity,
-                      height: 256,
+                  ),
+                )
+                : Center(
+                  child: Expanded(
+                    child: CircularProgressIndicator(
+                      color: const Color(0xFFED9A48),
                     ),
                   ),
-                  SizedBox(height: 16),
-                  Container(
-                    padding: EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: MarkdownBody(data: content ?? ""),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ),
+                ),
       ),
     );
   }

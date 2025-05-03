@@ -139,98 +139,108 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Container(
                                   margin: EdgeInsets.fromLTRB(4, 8, 4, 8),
                                   decoration: BoxDecoration(
-                                    color: Colors.grey[100],
+                                    border: Border.all(color: Colors.grey),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
-                                      Image.network(
-                                        snapshot.data?[index]['photo'],
-                                        width: 96,
-                                        height: 96,
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: ClipOval(
+                                          child: Image.network(
+                                            snapshot.data?[index]['photo'],
+                                            width: 64,
+                                            height: 64,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
                                       ),
                                       Expanded(
                                         child: Padding(
-                                          padding: const EdgeInsets.all(16.0),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text(
-                                                snapshot.data?[index]['title'] ??
-                                                    "[No title]",
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              SizedBox(height: 32),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
-                                                  GestureDetector(
-                                                    onTap: () async {
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (ctx) {
-                                                          return AlertDialog(
-                                                            title: Text(
-                                                              "Are you sure?",
-                                                            ),
-                                                            content: Text(
-                                                              "You're deleting a recipe",
-                                                            ),
-                                                            actions: [
-                                                              TextButton(
-                                                                onPressed: () async {
-                                                                  if (mounted) {
-                                                                    await supabase
-                                                                        .from(
-                                                                          "recipes",
-                                                                        )
-                                                                        .delete()
-                                                                        .eq(
-                                                                          "id",
-                                                                          snapshot
-                                                                              .data?[index]['id'],
-                                                                        );
-                                                                    Navigator.of(
-                                                                      context,
-                                                                    ).pop();
-                                                                    setState(() {
-                                                                      getRecipes();
-                                                                    });
-                                                                  }
-                                                                },
-                                                                child: Text(
-                                                                  "YES",
-                                                                ),
-                                                              ),
-                                                              TextButton(
-                                                                onPressed: () {
-                                                                  if (mounted) {
-                                                                    Navigator.of(
-                                                                      context,
-                                                                    ).pop();
-                                                                  }
-                                                                },
-                                                                child: Text(
-                                                                  "NO",
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          );
-                                                        },
-                                                      );
-                                                    },
-                                                    child: Icon(Icons.delete),
+                                                  Text(
+                                                    snapshot.data?[index]['title'] ??
+                                                        "[No title]",
+                                                    style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "${snapshot.data?[index]['content'].toString().substring(0, 40)}...",
+                                                    softWrap: true,
+                                                    maxLines: 2,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                    ),
                                                   ),
                                                 ],
+                                              ),
+                                              GestureDetector(
+                                                onTap: () async {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (ctx) {
+                                                      return AlertDialog(
+                                                        title: Text(
+                                                          "Are you sure?",
+                                                        ),
+                                                        content: Text(
+                                                          "You're deleting a recipe",
+                                                        ),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () async {
+                                                              if (mounted) {
+                                                                await supabase
+                                                                    .from(
+                                                                      "recipes",
+                                                                    )
+                                                                    .delete()
+                                                                    .eq(
+                                                                      "id",
+                                                                      snapshot
+                                                                          .data?[index]['id'],
+                                                                    );
+                                                                Navigator.of(
+                                                                  context,
+                                                                ).pop();
+                                                                setState(() {
+                                                                  getRecipes();
+                                                                });
+                                                              }
+                                                            },
+                                                            child: Text("YES"),
+                                                          ),
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              if (mounted) {
+                                                                Navigator.of(
+                                                                  context,
+                                                                ).pop();
+                                                              }
+                                                            },
+                                                            child: Text("NO"),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                child: Icon(Icons.delete),
                                               ),
                                             ],
                                           ),
@@ -244,9 +254,22 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         );
                   }
-                  return Center(
-                    child: CircularProgressIndicator(
-                      color: const Color(0xFFED9A48),
+                  return Expanded(
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(
+                            color: const Color(0xFFED9A48),
+                          ),
+                          SizedBox(height: 12),
+                          Text(
+                            "Loading your recipes...",
+                            style: TextStyle(color: Colors.grey, fontSize: 12),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },

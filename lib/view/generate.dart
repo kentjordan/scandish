@@ -20,7 +20,7 @@ class _GenerateState extends State<Generate> {
   Map<String, dynamic> recipe = {"title": "", "content": ""};
   String? imagePath;
   SupabaseClient supabase = Supabase.instance.client;
-  final localHost = "192.168.1.104:8000";
+  final localHost = "192.168.0.105:8000";
 
   @override
   void initState() {
@@ -73,62 +73,50 @@ class _GenerateState extends State<Generate> {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: SingleChildScrollView(
-            child: Expanded(
-              child: Column(
-                spacing: 8,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "ScanDish",
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  if (imagePath != null)
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.grey[200],
-                      ),
-                      child: Image.file(
-                        File(imagePath),
-                        width: double.infinity,
-                        height: 256,
-                      ),
+            child: Column(
+              spacing: 8,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (imagePath != null)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.file(
+                      File(imagePath),
+                      width: double.infinity,
+                      height: 256,
+                      fit: BoxFit.cover,
                     ),
-                  SizedBox(height: 8),
-                  if (isCreatingRecipe)
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.amber[200],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: EdgeInsets.all(8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        spacing: 8,
-                        children: [
-                          SizedBox(
-                            height: 16,
-                            width: 16,
-                            child: CircularProgressIndicator(strokeWidth: 1),
-                          ),
-                          Text("Creating your recipe. Please wait."),
-                        ],
-                      ),
-                    ),
-                  Text(
-                    recipe['title'],
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
+                SizedBox(height: 8),
+                if (isCreatingRecipe)
                   Container(
-                    padding: EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.grey[100],
+                      color: Colors.amber[200],
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: MarkdownBody(data: recipe['content']!),
+                    padding: EdgeInsets.all(8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      spacing: 8,
+                      children: [
+                        SizedBox(
+                          height: 16,
+                          width: 16,
+                          child: CircularProgressIndicator(strokeWidth: 1),
+                        ),
+                        Text("Creating your recipe. Please wait."),
+                      ],
+                    ),
                   ),
-                ],
-              ),
+                Text(
+                  recipe['title'],
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                Container(
+                  padding: EdgeInsets.all(12),
+                  child: MarkdownBody(data: recipe['content']!),
+                ),
+              ],
             ),
           ),
         ),
