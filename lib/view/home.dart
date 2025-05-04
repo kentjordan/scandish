@@ -178,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     ),
                                                   ),
                                                   Text(
-                                                    "${snapshot.data?[index]['content'].toString().substring(0, 40)}...",
+                                                    "${snapshot.data?[index]['content'].toString().substring(0, 32)}...",
                                                     softWrap: true,
                                                     maxLines: 2,
                                                     overflow:

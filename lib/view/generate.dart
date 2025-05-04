@@ -20,7 +20,7 @@ class _GenerateState extends State<Generate> {
   Map<String, dynamic> recipe = {"title": "", "content": ""};
   String? imagePath;
   SupabaseClient supabase = Supabase.instance.client;
-  final localHost = "192.168.0.105:8000";
+  final localHost = "192.168.1.100:8000";
 
   @override
   void initState() {
