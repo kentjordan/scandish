@@ -173,8 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    snapshot.data?[index]['title'] ??
-                                                        "[No title]",
+                                                    "${snapshot.data?[index]['title'].toString().substring(0, 24)}...",
                                                     style: TextStyle(
                                                       fontSize: 20,
                                                       fontWeight:
