@@ -14,9 +14,88 @@ class _LoginScreenState extends State<LoginScreen> {
   final AuthViewmodel _viewmodel = AuthViewmodel();
 
   bool isLoggingIn = false;
+  bool isValidEmail(String email) {
+    String pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+    RegExp regex = RegExp(pattern);
+    return regex.hasMatch(email);
+  }
 
   @override
   Widget build(BuildContext context) {
+    void login() async {
+      setState(() {
+        isLoggingIn = true;
+        String email = _emailController.text;
+        String password = _passwordController.text;
+
+        if (email.isEmpty || password.isEmpty) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text("Please fill in all fields.")));
+          setState(() {
+            isLoggingIn = false;
+          });
+          return;
+        }
+
+        if (!isValidEmail(email)) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Please enter a valid email address.")),
+          );
+          setState(() {
+            isLoggingIn = false;
+          });
+          return;
+        }
+
+        if (password.length < 6) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Password must be at least 6 characters.")),
+          );
+          setState(() {
+            isLoggingIn = false;
+          });
+          return;
+        }
+
+        _viewmodel
+            .login(email, password)
+            .then((data) {
+              if (!data['success']) {
+                // ignore: use_build_context_synchronously
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: Colors.red[800],
+                    content: Text(
+                      data['error'].code == "invalid_credentials"
+                          ? "Invalid email or password"
+                          : "Something went wrong when logging in. Please try again.",
+                    ),
+                  ),
+                );
+                setState(() {
+                  isLoggingIn = false;
+                });
+                return;
+              }
+              Navigator.of(
+                // ignore: use_build_context_synchronously
+                context,
+              ).pushReplacementNamed("/view/home");
+            })
+            .onError((error, _) {
+              setState(() {
+                isLoggingIn = false;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Something went wrong. Please try again."),
+                  ),
+                );
+              });
+            });
+      });
+    }
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -61,74 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               SizedBox(height: 24),
               ElevatedButton(
-                onPressed:
-                    isLoggingIn
-                        ? null
-                        : () async {
-                          setState(() {
-                            isLoggingIn = true;
-                            String email = _emailController.text;
-                            String password = _passwordController.text;
-                            _viewmodel
-                                .login(email, password)
-                                .then((data) {
-                                  if (!data['success']) {
-                                    showDialog(
-                                      // ignore: use_build_context_synchronously
-                                      context: context,
-                                      builder:
-                                          (ctx) => AlertDialog(
-                                            title: Text("Oops!"),
-                                            content: Text(
-                                              data['error'].code ==
-                                                      "invalid_credentials"
-                                                  ? "Invalid email or password"
-                                                  : "Something went wrong when logging in. Please try again.",
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    isLoggingIn = false;
-                                                  });
-                                                  Navigator.of(ctx).pop();
-                                                },
-                                                child: Text("OK"),
-                                              ),
-                                            ],
-                                          ),
-                                    );
-                                  }
-                                  Navigator.of(
-                                    // ignore: use_build_context_synchronously
-                                    context,
-                                  ).pushReplacementNamed("/view/home");
-                                })
-                                .onError((error, _) {
-                                  setState(() {
-                                    isLoggingIn = false;
-                                    showDialog(
-                                      context: context,
-                                      builder:
-                                          (ctx) => AlertDialog(
-                                            title: Text("Error"),
-                                            content: Text(
-                                              "Something went wrong. Please try again.",
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.of(ctx).pop();
-                                                },
-                                                child: Text("OK"),
-                                              ),
-                                            ],
-                                          ),
-                                    );
-                                  });
-                                });
-                          });
-                        },
+                onPressed: isLoggingIn ? null : login,
                 style: ElevatedButton.styleFrom(
                   elevation: 0,
                   shape: RoundedRectangleBorder(
