@@ -99,77 +99,84 @@ class _LoginScreenState extends State<LoginScreen> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image(image: AssetImage("assets/logo.png")),
-              TextField(
-                controller: _emailController,
-                style: TextStyle(fontSize: 12),
-                decoration: InputDecoration(
-                  hintText: "Email",
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                    borderSide: BorderSide(color: const Color(0xFFED9A48)),
-                  ),
-                  contentPadding: EdgeInsets.all(8),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(width: 2, color: Colors.red),
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16),
-              TextField(
-                controller: _passwordController,
-                style: TextStyle(fontSize: 12),
-                decoration: InputDecoration(
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                    borderSide: BorderSide(color: const Color(0xFFED9A48)),
-                  ),
-                  contentPadding: EdgeInsets.all(8),
-                  hintText: "Password",
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(width: 2, color: Colors.red),
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image(image: AssetImage("assets/logo.png")),
+                TextField(
+                  controller: _emailController,
+                  style: TextStyle(fontSize: 12),
+                  decoration: InputDecoration(
+                    hintText: "Email",
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                      borderSide: BorderSide(color: const Color(0xFFED9A48)),
+                    ),
+                    contentPadding: EdgeInsets.all(8),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(width: 2, color: Colors.red),
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: isLoggingIn ? null : login,
-                style: ElevatedButton.styleFrom(
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                SizedBox(height: 16),
+                TextField(
+                  controller: _passwordController,
+                  style: TextStyle(fontSize: 12),
+                  decoration: InputDecoration(
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                      borderSide: BorderSide(color: const Color(0xFFED9A48)),
+                    ),
+                    contentPadding: EdgeInsets.all(8),
+                    hintText: "Password",
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(width: 2, color: Colors.red),
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                    ),
                   ),
-                  backgroundColor: const Color(0xFFED9A48),
-                  minimumSize: Size.fromHeight(40),
                 ),
-                child:
-                    isLoggingIn
-                        ? SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(color: Colors.white),
-                        )
-                        : Text("Login", style: TextStyle(color: Colors.white)),
-              ),
-              SizedBox(height: 24),
-              TextButton(
-                onPressed:
-                    () => {
-                      Navigator.of(context).pushNamed("/view/auth/signup"),
-                    },
-                child: Text(
-                  "Don't have an account? Sign up",
-                  style: TextStyle(color: Colors.grey),
+                SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: isLoggingIn ? null : login,
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    backgroundColor: const Color(0xFFED9A48),
+                    minimumSize: Size.fromHeight(40),
+                  ),
+                  child:
+                      isLoggingIn
+                          ? SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          )
+                          : Text(
+                            "Login",
+                            style: TextStyle(color: Colors.white),
+                          ),
                 ),
-              ),
-            ],
+                SizedBox(height: 24),
+                TextButton(
+                  onPressed:
+                      () => {
+                        Navigator.of(context).pushNamed("/view/auth/signup"),
+                      },
+                  child: Text(
+                    "Don't have an account? Sign up",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
