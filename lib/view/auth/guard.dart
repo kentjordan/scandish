@@ -19,7 +19,6 @@ class _AuthGuardScreenState extends State<AuthGuardScreen> {
         if (snapShot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
         }
-
         if (snapShot.hasData && snapShot.data?.session != null) {
           return HomeScreen();
         } else {
