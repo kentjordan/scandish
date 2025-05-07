@@ -184,25 +184,34 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text(
-                                                    snapshot
-                                                        .data?[index]['title'],
-                                                    style: TextStyle(
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                                  SizedBox(
+                                                    width: 200,
+                                                    child: Text(
+                                                      snapshot.data?[index]['title'] ??
+                                                          "No title",
+                                                      softWrap: true,
+                                                      style: TextStyle(
+                                                        overflow:
+                                                            TextOverflow
+                                                                .ellipsis,
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
                                                     ),
                                                   ),
-                                                  Text(
-                                                    "${snapshot.data?[index]['content'].toString().substring(0, 32)}...",
-                                                    softWrap: true,
-                                                    maxLines: 2,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                      fontSize: 12,
+                                                  SizedBox(
+                                                    width: 200,
+                                                    child: Text(
+                                                      snapshot.data?[index]['content'] ??
+                                                          "No content",
+                                                      softWrap: true,
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                      ),
                                                     ),
                                                   ),
                                                 ],
