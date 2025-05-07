@@ -19,7 +19,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void getRecipes() {
     recipes = supabase
         .from("recipes")
-        .select('id, created_at, title, content, photo');
+        .select('id, created_at, title, content, photo')
+        .eq('user_id', supabase.auth.currentUser!.id);
   }
 
   void logout() {
@@ -60,7 +61,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 TextButton(
                                   onPressed: () {
                                     logout();
-                                    Navigator.of(context).pop();
+                                    Navigator.of(
+                                      context,
+                                    ).pushReplacementNamed("/view/auth/login");
                                   },
                                   child: Text("YES"),
                                 ),
@@ -88,7 +91,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         setState(() {
                           recipes = supabase
                               .from("recipes")
-                              .select('id, created_at, title, content, photo');
+                              .select('id, created_at, title, content, photo')
+                              .eq('user_id', supabase.auth.currentUser!.id);
                         });
                       },
                       child: Row(
@@ -105,19 +109,19 @@ class _HomeScreenState extends State<HomeScreen> {
               FutureBuilder(
                 future: recipes,
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done &&
-                      snapshot.hasData &&
-                      snapshot.data != null) {
-                    return snapshot.data!.isEmpty
-                        ? Expanded(
-                          child: Center(
-                            child: Text(
-                              textAlign: TextAlign.center,
-                              "Tap the button below to\ngenerate your first recipe.",
-                            ),
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.data == null) {
+                      return Expanded(
+                        child: Center(
+                          child: Text(
+                            textAlign: TextAlign.center,
+                            "No recipes found.\nTap the button below to generate your first recipe.",
                           ),
-                        )
-                        : Expanded(
+                        ),
+                      );
+                    } else {
+                      if (snapshot.data!.isNotEmpty) {
+                        return Expanded(
                           child: ListView.builder(
                             itemCount: snapshot.data?.length,
                             itemBuilder: (context, index) {
@@ -216,6 +220,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                           .data?[index]['id'],
                                                                     );
                                                                 Navigator.of(
+                                                                  // ignore: use_build_context_synchronously
                                                                   context,
                                                                 ).pop();
                                                                 setState(() {
@@ -253,7 +258,19 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                           ),
                         );
+                      }
+
+                      return Expanded(
+                        child: Center(
+                          child: Text(
+                            textAlign: TextAlign.center,
+                            "No recipes found.\nTap the button below to generate your first recipe.",
+                          ),
+                        ),
+                      );
+                    }
                   }
+
                   return Expanded(
                     child: SizedBox(
                       width: double.infinity,

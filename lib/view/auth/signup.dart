@@ -19,9 +19,8 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+    return SafeArea(
+      child: Scaffold(
         backgroundColor: Colors.white,
         body: Padding(
           padding: EdgeInsets.all(16),
@@ -147,6 +146,11 @@ class _SignupScreenState extends State<SignupScreen> {
                                         ),
                                   );
                                 }
+                                Navigator.pushReplacementNamed(
+                                  // ignore: use_build_context_synchronously
+                                  context,
+                                  "/view/home",
+                                );
                               })
                               .onError((error, _) {
                                 setState(() {

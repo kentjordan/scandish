@@ -20,13 +20,6 @@ class _AuthGuardScreenState extends State<AuthGuardScreen> {
           return Center(child: CircularProgressIndicator());
         }
 
-        print("Guard");
-        print("Session");
-        print(snapShot.data?.session);
-        print("Data");
-        print(snapShot.data);
-        print(snapShot.hasData && snapShot.data?.session != null);
-
         if (snapShot.hasData && snapShot.data?.session != null) {
           return HomeScreen();
         } else {
