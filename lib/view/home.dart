@@ -49,7 +49,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     "ScanDish",
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                  GestureDetector(
+                  InkWell(
+                    borderRadius: BorderRadius.circular(4),
+                    focusColor: Colors.amber[50],
+                    splashColor: Colors.amber[600],
+                    highlightColor: Colors.amber[600],
                     onTap: () {
                       showDialog(
                         context: context,
@@ -86,7 +90,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    GestureDetector(
+                    InkWell(
+                      borderRadius: BorderRadius.circular(4),
+                      focusColor: Colors.amber[50],
+                      splashColor: Colors.amber[600],
+                      highlightColor: Colors.amber[600],
                       onTap: () async {
                         setState(() {
                           recipes = supabase
@@ -125,7 +133,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: ListView.builder(
                             itemCount: snapshot.data?.length,
                             itemBuilder: (context, index) {
-                              return GestureDetector(
+                              return InkWell(
+                                borderRadius: BorderRadius.circular(8),
+                                focusColor: Colors.amber[50],
+                                splashColor: Colors.amber[700],
+                                highlightColor: Colors.amber[700],
                                 onTap: () {
                                   context
                                       .read<RecipeProvider>()

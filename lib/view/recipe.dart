@@ -52,6 +52,30 @@ class _RecipeScreenState extends State<RecipeScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Container(
+                          margin: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(4),
+                            focusColor: Colors.amber[50],
+                            splashColor: Colors.amber[600],
+                            highlightColor: Colors.amber[600],
+                            onTap: () => Navigator.pop(context),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              spacing: 4,
+                              children: [
+                                Icon(Icons.arrow_back),
+                                Text(
+                                  "BACK",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                         if (title != null &&
                             content != null &&
                             photoUrl != null) ...[
