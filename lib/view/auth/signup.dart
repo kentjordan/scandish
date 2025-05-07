@@ -16,9 +16,117 @@ class _SignupScreenState extends State<SignupScreen> {
   final _viewModel = AuthViewmodel();
 
   bool isSigningUp = false;
+  bool isValidEmail(String email) {
+    String pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+    RegExp regex = RegExp(pattern);
+    return regex.hasMatch(email);
+  }
 
   @override
   Widget build(BuildContext context) {
+    void signup() async {
+      setState(() {
+        isSigningUp = true;
+      });
+      String email = _emailController.text;
+      String password = _passwordController.text;
+      String firstName = _firstNameController.text;
+      String lastName = _lastNameController.text;
+
+      if (firstName.isEmpty ||
+          lastName.isEmpty ||
+          email.isEmpty ||
+          password.isEmpty) {
+        setState(() {
+          isSigningUp = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Please fill all fields"),
+            duration: Duration(seconds: 2),
+          ),
+        );
+        setState(() {
+          isSigningUp = false;
+        });
+        return;
+      }
+
+      if (!isValidEmail(email)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Please enter a valid email address.")),
+        );
+        setState(() {
+          isSigningUp = false;
+        });
+        return;
+      }
+      if (password.length < 6) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Password must be at least 6 characters.")),
+        );
+        setState(() {
+          isSigningUp = false;
+        });
+        return;
+      }
+      _viewModel
+          .signup(email, password)
+          .then((data) {
+            if (!data['success']) {
+              showDialog(
+                // ignore: use_build_context_synchronously
+                context: context,
+                builder:
+                    (ctx) => AlertDialog(
+                      title: Text("Oops!"),
+                      content: Text(
+                        "Something went wrong when signing up. Please try again.",
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              isSigningUp = false;
+                            });
+
+                            Navigator.of(ctx).pop();
+                          },
+                          child: Text("OK"),
+                        ),
+                      ],
+                    ),
+              );
+            }
+            Navigator.pushReplacementNamed(
+              // ignore: use_build_context_synchronously
+              context,
+              "/view/home",
+            );
+          })
+          .onError((error, _) {
+            setState(() {
+              isSigningUp = false;
+              showDialog(
+                context: context,
+                builder:
+                    (ctx) => AlertDialog(
+                      title: Text("Error"),
+                      content: Text("Something went wrong. Please try again."),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(ctx).pop();
+                          },
+                          child: Text("OK"),
+                        ),
+                      ],
+                    ),
+              );
+            });
+          });
+    }
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -122,72 +230,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
                 SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed:
-                      isSigningUp
-                          ? null
-                          : () async {
-                            setState(() {
-                              isSigningUp = true;
-                            });
-                            String email = _emailController.text;
-                            String password = _passwordController.text;
-                            _viewModel
-                                .signup(email, password)
-                                .then((data) {
-                                  if (!data['success']) {
-                                    showDialog(
-                                      context: context,
-                                      builder:
-                                          (ctx) => AlertDialog(
-                                            title: Text("Oops!"),
-                                            content: Text(
-                                              "Something went wrong when signing up. Please try again.",
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    isSigningUp = false;
-                                                  });
-
-                                                  Navigator.of(ctx).pop();
-                                                },
-                                                child: Text("OK"),
-                                              ),
-                                            ],
-                                          ),
-                                    );
-                                  }
-                                  Navigator.pushReplacementNamed(
-                                    // ignore: use_build_context_synchronously
-                                    context,
-                                    "/view/home",
-                                  );
-                                })
-                                .onError((error, _) {
-                                  setState(() {
-                                    isSigningUp = false;
-                                    showDialog(
-                                      context: context,
-                                      builder:
-                                          (ctx) => AlertDialog(
-                                            title: Text("Error"),
-                                            content: Text(
-                                              "Something went wrong. Please try again.",
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.of(ctx).pop();
-                                                },
-                                                child: Text("OK"),
-                                              ),
-                                            ],
-                                          ),
-                                    );
-                                  });
-                                });
-                          },
+                  onPressed: isSigningUp ? null : signup,
                   style: ElevatedButton.styleFrom(
                     elevation: 0,
                     shape: RoundedRectangleBorder(
