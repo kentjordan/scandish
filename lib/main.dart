@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:scandish/providers/recipe.dart';
 import 'package:scandish/view/auth/guard.dart';
 import 'package:scandish/view/auth/login.dart';
 import 'package:scandish/view/auth/signup.dart';
+import 'package:scandish/view/generate.dart';
 import 'package:scandish/view/home.dart';
+import 'package:scandish/view/recipe.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:scandish/providers/image.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,14 +27,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      routes: {
-        "/view/auth/login": (ctx) => LoginScreen(),
-        "/view/auth/signup": (ctx) => SignupScreen(),
-        "/view/home": (ctx) => HomeScreen(),
-      },
-      title: 'ScanDish',
-      home: AuthGuardScreen(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (ctx) => ScandishImageProvider()),
+        ChangeNotifierProvider(create: (ctx) => RecipeProvider()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        initialRoute: "/view/auth/guard",
+        routes: {
+          "/view/auth/guard": (ctx) => AuthGuardScreen(),
+          "/view/auth/login": (ctx) => LoginScreen(),
+          "/view/auth/signup": (ctx) => SignupScreen(),
+          "/view/home": (ctx) => HomeScreen(),
+          "/view/generate": (ctx) => Generate(),
+          "/view/recipe": (ctx) => RecipeScreen(),
+        },
+        title: 'ScanDish',
+      )
     );
   }
 }
