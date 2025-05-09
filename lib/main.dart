@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
           "/view/recipe": (ctx) => RecipeScreen(),
         },
         title: 'ScanDish',
-      ),
+      )
     );
   }
 }
